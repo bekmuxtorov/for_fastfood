@@ -1,3 +1,4 @@
+from django.contrib.auth import authenticate
 from rest_framework import generics, status
 from rest_framework.views import APIView
 from rest_framework import permissions
@@ -41,6 +42,36 @@ class UserRegisterAPIView(APIView):
             }
             return Response(response_data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class UserLoginApiView(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    @swagger_auto_schema(
+        operation_description="Login user",
+        request_body=openapi.Schema(
+            required=['phone_number', 'password'],
+            type=openapi.TYPE_OBJECT,
+            properties={
+                'phone_number': openapi.Schema(type=openapi.TYPE_STRING, description='Phone number'),
+                'password': openapi.Schema(type=openapi.TYPE_STRING, description='Password'),
+            }
+        ),
+    )
+    def post(self, request):
+        phone_number = request.data.get('phone_number')
+        password = request.data.get('password')
+        user = authenticate(phone_number=phone_number, password=password)
+        if user:
+            user_data = {
+                'id': user.id,
+                'role': user.role,
+                'phone_number': user.phone_number,
+                'full_name': user.full_name,
+                'token': f"Token {Token.objects.get_or_create(user=user)[0].key}"
+            }
+            return Response(user_data)
+        return Response({'error': 'Incorrect login or password'}, status=400)
 
 
 class UserListAPIView(generics.ListAPIView):
