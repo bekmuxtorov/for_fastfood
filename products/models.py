@@ -8,7 +8,7 @@ class Meal(models.Model):
     )
     cost = models.DecimalField(
         verbose_name='Ovqat narxi(UZS):',
-        max_digits=6,
+        max_digits=15,
         decimal_places=2
     )
     created_at = models.DateTimeField(auto_now_add=True)
