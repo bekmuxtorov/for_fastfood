@@ -2,12 +2,18 @@ from rest_framework import generics
 
 from .import serializers
 from .import models
+from users.permissions import (
+    IsAdmin,
+    IsCustomer,
+    IsWaiter
+)
 
 
 # Order Create api view
 class OrderCreateAPIView(generics.CreateAPIView):
     queryset = models.Order.objects.all()
     serializer_class = serializers.OrderCreateUpdateSerializer
+    permission_classes = [IsAdmin, IsCustomer]
 
 
 # Order List api view
@@ -26,12 +32,14 @@ class OrderGenericAPIView(generics.RetrieveAPIView):
 class OrderUpdateAPIView(generics.UpdateAPIView):
     queryset = models.Order.objects.all()
     serializer_class = serializers.OrderCreateUpdateSerializer
+    permission_classes = [IsAdmin, IsCustomer]
 
 
 # Order Delete api view
 class OrderDeleteAPIView(generics.DestroyAPIView):
     queryset = models.Order.objects.all()
     serializer_class = serializers.OrderSerializer
+    permission_classes = [IsAdmin, IsCustomer]
 
 
 # Order Item
@@ -41,6 +49,7 @@ class OrderDeleteAPIView(generics.DestroyAPIView):
 class OrderItemCreateAPIView(generics.CreateAPIView):
     queryset = models.OrderItem.objects.all()
     serializer_class = serializers.OrderItemSerializer
+    permission_classes = [IsAdmin, IsCustomer]
 
 
 # OrderItem List api view

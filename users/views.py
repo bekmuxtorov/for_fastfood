@@ -9,6 +9,7 @@ from drf_yasg.utils import swagger_auto_schema
 
 from .serializers import UserSerializer, UserRegisterSerializer
 from .models import User
+from .permissions import IsAdmin
 
 
 class UserRegisterAPIView(APIView):
@@ -77,3 +78,4 @@ class UserLoginApiView(APIView):
 class UserListAPIView(generics.ListAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    permission_classes = [IsAdmin]
