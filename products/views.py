@@ -1,4 +1,6 @@
+from rest_framework import filters
 from rest_framework import generics
+from django_filters.rest_framework import DjangoFilterBackend
 
 from .import serializers
 from .import models
@@ -17,10 +19,14 @@ class MealCreateAPIView(generics.CreateAPIView):
 
 
 # Meal List api view
+
+
 class MealListAPIView(generics.ListAPIView):
     queryset = models.Meal.objects.all()
     serializer_class = serializers.MealSerializer
     permission_classes = [IsWaiter | IsAdmin | IsCustomer]
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['name',]
 
 
 # Meal Detail api view

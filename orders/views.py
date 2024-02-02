@@ -1,4 +1,6 @@
 from rest_framework import generics
+from rest_framework import filters
+from django_filters.rest_framework import DjangoFilterBackend
 
 from .import serializers
 from .import models
@@ -20,6 +22,12 @@ class OrderCreateAPIView(generics.CreateAPIView):
 class OrderListAPIView(generics.ListAPIView):
     queryset = models.Order.objects.all()
     serializer_class = serializers.OrderListRetrieveSerializer
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    filterset_fields = ['user',]
+    search_fields = [
+        'user__full_name',
+        'user__phone_number', 'longitude', 'latitude'
+    ]
 
 
 # Order Detail api view
@@ -56,6 +64,9 @@ class OrderItemCreateAPIView(generics.CreateAPIView):
 class OrderItemListAPIView(generics.ListAPIView):
     queryset = models.OrderItem.objects.all()
     serializer_class = serializers.OrderItemSerializer
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    filterset_fields = ['order', 'meal__name', ]
+    search_fields = ['meal__name', 'count', 'payment']
 
 
 # OrderItem Detail api view

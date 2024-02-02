@@ -1,11 +1,14 @@
 from django.contrib.auth import authenticate
-from rest_framework import generics, status
+from rest_framework import generics
+from rest_framework import status
+from rest_framework import filters
 from rest_framework.views import APIView
 from rest_framework import permissions
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
+from django_filters.rest_framework import DjangoFilterBackend
 
 from .serializers import UserSerializer, UserRegisterSerializer
 from .models import User
@@ -85,3 +88,6 @@ class UserListAPIView(generics.ListAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [IsAdmin]
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    filterset_fields = ['role',]
+    search_fields = ['phone_number', 'full_name']
