@@ -2,6 +2,7 @@ from django.db.models import Sum
 from django.db import models
 from users.models import User
 from products.models import Meal
+from utils.determining_total_time import total_time
 
 
 class Order(models.Model):
@@ -26,8 +27,6 @@ class Order(models.Model):
         null=True,
         verbose_name="Tahminiy yetkazib berish vaqti"
     )
-    items = models.ManyToManyField(
-        "orders.OrderItem", related_name='orders', verbose_name="Items")
     total_payment = models.DecimalField(
         verbose_name="Umumiy to'lov(chek)",
         max_digits=12,
@@ -39,8 +38,35 @@ class Order(models.Model):
     def __str__(self):
         return ' | '.join(["Order", str(self.id), self.user.phone_number])
 
+    def set_total_payment(self):
+        total_payment = sum([item.payment for item in self.order_items.all()])
+        if not self.total_payment or self.total_payment != total_payment:
+            self.total_payment = total_payment
+            self.save()
+
+        return self.total_payment
+
+    def set_delivery_time(self):
+        products_count = sum([item.count for item in self.order_items.all()])
+        delivery_time = total_time(
+            self.latitude, self.longitude, products_count)
+
+        if not self.delivery_time:
+            self.delivery_time = delivery_time
+            self.save()
+
+        return self.delivery_time
+
 
 class OrderItem(models.Model):
+    order = models.ForeignKey(
+        to=Order,
+        on_delete=models.CASCADE,
+        verbose_name="Buyurtma",
+        related_name='order_items',
+        null=True,
+        blank=True
+    )
     meal = models.ForeignKey(
         to=Meal,
         on_delete=models.CASCADE,
