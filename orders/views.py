@@ -12,26 +12,26 @@ from users.permissions import (
 # Order Create api view
 class OrderCreateAPIView(generics.CreateAPIView):
     queryset = models.Order.objects.all()
-    serializer_class = serializers.OrderCreateUpdateSerializer
+    serializer_class = serializers.OrderSerializer
     permission_classes = [IsAdmin | IsCustomer]
 
 
 # Order List api view
 class OrderListAPIView(generics.ListAPIView):
     queryset = models.Order.objects.all()
-    serializer_class = serializers.OrderSerializer
+    serializer_class = serializers.OrderListRetrieveSerializer
 
 
 # Order Detail api view
 class OrderGenericAPIView(generics.RetrieveAPIView):
     queryset = models.Order.objects.all()
-    serializer_class = serializers.OrderSerializer
+    serializer_class = serializers.OrderListRetrieveSerializer
 
 
 # Order Update api view
 class OrderUpdateAPIView(generics.UpdateAPIView):
     queryset = models.Order.objects.all()
-    serializer_class = serializers.OrderCreateUpdateSerializer
+    serializer_class = serializers.OrderSerializer
     permission_classes = [IsAdmin | IsCustomer]
 
 
