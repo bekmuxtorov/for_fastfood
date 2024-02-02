@@ -34,11 +34,17 @@ class UserRegisterAPIView(APIView):
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
+            if request.user != "admin" and request.data.get('role') == "admin":
+                response_data = {
+                    'error': 'Admin yaratish uchun sizni huquqlaringiz yetmaydi!'
+                }
+                return Response(response_data, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
             user = serializer.save()
 
             token = Token.objects.get_or_create(user=user)[0].key
             response_data = {
-                'token': token,
+                'token': f'Token {token}',
                 'user': serializer.data,
             }
             return Response(response_data, status=status.HTTP_201_CREATED)
